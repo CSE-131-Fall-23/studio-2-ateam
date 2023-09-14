@@ -7,32 +7,59 @@ public class Ruin {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Scanner in = new Scanner(System.in);
-		System.out.println("start Amount is?: ");
+		System.out.println("Start Amount is?: $");
 		int startAmount= in.nextInt();
 		System.out.println("Win chance?: ");
 		double winChance= in.nextDouble();
-		System.out.println("Win limit?: ");
+		System.out.println("Win limit? (per day): ");
 		int winLimit= in.nextInt();
-		System.out.println("Toltal games?: ");
+		System.out.println("Total simulations (days)?: ");
 		int totalSimulations= in.nextInt();
+		
+		
+		//initial values
 		int start=0;
 		int wins=0;
-		while( totalSimulations>0 && startAmount>0 && startAmount<winLimit) {
-			totalSimulations--;
-			start++;
-			double rand= Math.random();
-			if(rand<winChance) {
-				startAmount++;
-				wins++;
-				System.out.println("Round: " +start+ ". You won!  You have: $" +startAmount);
-			}else {
-				startAmount--;
-				System.out.println("Round: " +start+ ". You lost :(  You have: $" +startAmount);
+		int losses=0;
+		int currentBalance= startAmount;
+		int rounds=0;
+		boolean won=false;
+		
+		//run number of days
+		for(int i=1;i<=totalSimulations; i++) {
+			// play each day
+			
+			
+			while(currentBalance>0 && currentBalance<winLimit ) {
+				double rand= Math.random();
+				if(rand<winChance) {
+					currentBalance++;
+				}else {
+					currentBalance--;
+				}
+				rounds++;
 			}
 			
-		}
-		System.out.println("Day done :). You have: $" +startAmount+ " after " +start+ " rounds. Ruin rate: "+(Math.round(wins/totalSimulations)*100.0)/100.0) +"Expected ruin rate: " +(wins/totalSimulations));
+			//after each game
+			if(currentBalance<=0) {
+				losses++; //you lost if you ended with $0
+				won=false;
+			}else {
+				wins++; // you won if you ended with more than $0 (for some reason...)
+				won=true;
+			}
 			
+			//print number of rounds played before losing or winning
+			System.out.println("On day "+i+ " you played " +rounds+ " and you won: " +won );
+			
+		
+			//reset current balance to start amount
+			currentBalance=startAmount;
+			rounds=0; 
+			
+		}
+		
+		System.out.println("Ruin rate is " + ((double)losses)/(losses+wins));
 		
 	}
 	
